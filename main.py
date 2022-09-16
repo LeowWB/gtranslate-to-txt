@@ -60,8 +60,5 @@ with open(CSV_PATH, 'r', encoding='utf-8') as csv_file:
         if i % 10 == 0:
             print(f'progress: {i}')
 
-        if i > 20:
-            break
-
 with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
     f.write(outputs)
