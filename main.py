@@ -37,10 +37,6 @@ def get_pinyin(driver, chinese_phrase):
     pinyin = pinyin_label.get_attribute('innerHTML')
     return pinyin
 
-def swap_translation_output_string(translation_output_string):
-    split_string = translation_output_string.split(',')
-    return f'{split_string[1]},{split_string[0]}'
-
 def process_line(driver, line):
     if line[0] == 'English':
         english_bit = line[2]
@@ -58,31 +54,37 @@ def process_line(driver, line):
 def processed_line_to_output(processed_line):
     english_bit, chinese_bit, pinyin, en_to_zh = processed_line
     if en_to_zh:
-        translation_string = f'{english_bit} -> {chinese_bit} {pinyin}'
-        prelim_output_string = f'{english_bit},{chinese_bit} {pinyin}'
+        print(f'{english_bit} -> {chinese_bit} {pinyin}')
     else:
-        translation_string = f'{chinese_bit} {pinyin} -> {english_bit}'
-        prelim_output_string = f'{chinese_bit} {pinyin},{english_bit}'
+        print(f'{chinese_bit} {pinyin} -> {english_bit}')
 
-    user_input_request_string = f'{translation_string}\n[1] Ok\t[2] Swap\t[3] Both\t[4] Change English\t[5] Change English and Swap\t[6] Skip\n'
-    user_choice = int(input(user_input_request_string))
+    user_choice = input("[1] Add\t[2] Add Reversed\t[3] Don't Add\t[4] Change English\t[5] Change Pinyin\n")
 
-    if user_choice == 1:
-        output = f'{prelim_output_string}\n'
-    elif user_choice == 2:
-        output = f'{swap_translation_output_string(prelim_output_string)}\n'
-    elif user_choice == 3:
-        output = f'{prelim_output_string}\n{swap_translation_output_string(prelim_output_string)}\n'
-    elif user_choice == 4 or user_choice == 5:
-        new_english = input('Enter new English translation:\n')
-        output = f'{prelim_output_string.replace(english_bit, new_english)}'
-        if user_choice == 5:
-            output = swap_translation_output_string(output)
-        output += '\n'
+    if '3' in user_choice:
+        output = ''
     else:
+        if '4' in user_choice:
+            english_bit = input('Enter new English translation: ')
+        
+        if '5' in user_choice:
+            pinyin = input('Enter new pinyin: ')
+        
+        if en_to_zh:
+            first_bit = english_bit
+            second_bit = chinese_bit
+        else:
+            first_bit = chinese_bit
+            second_bit = english_bit
+
         output = ''
 
-    print(f'Result: {output}\n')
+        if '1' in user_choice:
+            output += f'{first_bit},{second_bit} {pinyin}\n'
+        
+        if '2' in user_choice:
+            output += f'{second_bit},{first_bit} {pinyin}\n'
+
+    print(f'Result:\n{output}\n')
     return output
 
 outputs = ''
