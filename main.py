@@ -5,10 +5,12 @@ import os
 import time
 import csv
 
-TIMER_MULTIPLIER = 1
+TIMER_MULTIPLIER = 2
 DRIVER_PATH = 'chromedriver/chromedriver.exe'
 CSV_PATH = 'Saved translations - Saved translations.csv'
 OUTPUT_PATH = 'output.csv'
+
+num_lines = 0
 
 # set up driver
 driver = webdriver.Chrome(DRIVER_PATH) 
@@ -50,6 +52,10 @@ def process_line(driver, line):
 
     pinyin = get_pinyin(driver, chinese_bit)
     
+    english_bit = english_bit.replace(',','/').strip()
+    chinese_bit = chinese_bit.replace(',','/').strip()
+    pinyin = pinyin.replace(',','/').strip()
+
     return (english_bit, chinese_bit, pinyin, en_to_zh)
 
 def processed_line_to_output(processed_line):
@@ -92,15 +98,18 @@ outputs = ''
 processed_lines = []
 
 with open(CSV_PATH, 'r', encoding='utf-8') as csv_file:
+    num_lines = len(csv_file.readlines())
+    csv_file.seek(0)
     reader = csv.reader(csv_file)
 
     for i, line in enumerate(reader):
         processed_lines.append(process_line(driver, line))
 
         if i % 10 == 0:
-            print(f'progress: {i}')
+            print(f'progress: {i}/{num_lines} ({i/num_lines*100:.2f}%)')
 
-for processed_line in processed_lines:
+for i, processed_line in enumerate(processed_lines):
+    print(f'({i}/{num_lines})',end='')
     outputs += processed_line_to_output(processed_line)
 
 with open(OUTPUT_PATH, 'w', encoding='utf-8') as f:
