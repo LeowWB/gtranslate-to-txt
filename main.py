@@ -5,6 +5,7 @@ import os
 import time
 import csv
 
+TIMER_MULTIPLIER = 1
 DRIVER_PATH = 'chromedriver/chromedriver.exe'
 CSV_PATH = 'Saved translations - Saved translations.csv'
 OUTPUT_PATH = 'output.csv'
@@ -14,25 +15,25 @@ driver = webdriver.Chrome(DRIVER_PATH)
 page_url = 'https://translate.google.com' 
 driver.get(page_url) 
 driver.maximize_window() 
-driver.implicitly_wait(20) 
-time.sleep(1)
+driver.implicitly_wait(20*TIMER_MULTIPLIER) 
+time.sleep(1*TIMER_MULTIPLIER)
 
 # choose chinese. i can't use "Detect Language" because some words are interpreted as japanese.
 choose_lang_button = driver.find_element(by=By.XPATH, value='/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[1]/c-wiz/div[2]/button')
 choose_lang_button.click()
-time.sleep(1)
+time.sleep(1*TIMER_MULTIPLIER)
 chinese_button = driver.find_element(by=By.XPATH, value='//*[@id="yDmH0d"]/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[1]/c-wiz/div[2]/c-wiz/div[1]/div/div[3]/div/div[3]/div[20]/div[2]')
 chinese_button.click()
-time.sleep(1)
+time.sleep(1*TIMER_MULTIPLIER)
 
 # gets the pinyin of a chinese phrase from google translate
 def get_pinyin(driver, chinese_phrase):
     textarea = driver.find_element(by=By.XPATH, value='/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[3]/c-wiz[1]/span/span/div/textarea')
     textarea.clear()
-    time.sleep(2)
+    time.sleep(2*TIMER_MULTIPLIER)
     textarea.send_keys(chinese_phrase)
-    driver.implicitly_wait(20) 
-    time.sleep(2) 
+    driver.implicitly_wait(20*TIMER_MULTIPLIER) 
+    time.sleep(2*TIMER_MULTIPLIER) 
     pinyin_label = driver.find_element(by=By.XPATH, value='/html/body/c-wiz/div/div[2]/c-wiz/div[2]/c-wiz/div[1]/div[2]/div[3]/c-wiz[1]/div[2]/div[1]')
     pinyin = pinyin_label.get_attribute('innerHTML')
     return pinyin
